@@ -2,6 +2,7 @@ const $ = (s) => document.querySelector(s);
 
 const listsContainer = $(".lists");
 const inputList = $("#add-list");
+const clearBtn = $(".clear");
 
 function useState(initState, onchange) {
   let state = initState;
@@ -39,10 +40,18 @@ const [getState, setState] = useState(init, (state) => {
   listsContainer.innerHTML = "";
 
   state.forEach(({ id, name, filter, todos }, listIndex) => {
-    listsContainer.innerHTML += `
+    listsContainer.innerHTML += ` 
       <div class="list">
+        <i class="delete_list" onclick="deleteList(${id}) ">✖</i>
+        <span class="todos_count">0/0</span>
         <h2>${name}</h2>
-        <ul id="list-${id}">
+        <ul class='options'>
+          <li class="all_done" onclick= "allDone(${listIndex})">All Done</li>
+          <li class="all_Un_done" onclick= "allUnDone(${listIndex})">All Un Done</li>
+          <li class="all_Un_done" onclick= "clearTodos(${listIndex})">Clear All</li>
+        </ul>
+        <p class="menu" onclick =" displayOptions(${listIndex})">≣</p>
+        <ul class = 'todos' id="list-${id}">
         </ul>
         <button class ="filter_btn ${
           filter.length || "hidden"
@@ -50,11 +59,12 @@ const [getState, setState] = useState(init, (state) => {
         <input class="add-todo" placeholder="Add a todo" />
       </div>
     `;
-
     const ul = $("#list-" + id);
-    console.log(ul);
 
-    const filteredTodos = todos.filter((todo) => todo.text.includes(filter));
+    const filteredTodos = todos.filter(({ text }) => text.includes(filter));
+    console.log(filteredTodos.length);
+    filteredTodos.length === 0 &&
+      (ul.innerHTML += `<h2>There is no todos yet...</h2>`);
 
     filteredTodos.forEach((todo, index) => {
       ul.innerHTML += `
@@ -69,13 +79,14 @@ const [getState, setState] = useState(init, (state) => {
               )
               .join(" ")}
           </div>
-          <i class="delete_btn" onclick="deleteTodo(${listIndex},${
+          <i class="delete_todo" onclick="deleteTodo(${listIndex},${
         todo.id
-      }) ">❌<i>
+      }) ">✖<i>
         </li>
       `;
     });
   });
+
   document.querySelectorAll(".hash").forEach(
     (span) =>
       (span.onclick = () => {
@@ -86,11 +97,13 @@ const [getState, setState] = useState(init, (state) => {
       })
   );
 
-  document.querySelectorAll(".add-todo").forEach((inputTodo, index) => {
-    inputTodo.onchange = () => addTodo(index, inputTodo.value);
-    inputTodo.onfocus = () => (inputTodo.style.width = "100%");
-    inputTodo.onblur = () => (inputTodo.style.width = "80px");
-  });
+  document
+    .querySelectorAll(".add-todo")
+    .forEach(
+      (inputTodo, index) =>
+        (inputTodo.onchange = () => addTodo(index, inputTodo.value))
+    );
+
   document
     .querySelectorAll(".filter_btn")
     .forEach(
@@ -103,8 +116,23 @@ const [getState, setState] = useState(init, (state) => {
         "linear-gradient(to top left, #39b385, #2bcd71)";
     else
       list.style.backgroundImage =
-        "linear-gradient(to top left, #e52a5a, #ef8aa5)";
+        "linear-gradient(to top left, #e52a5a, #ff585f)";
   });
+
+  const doneTodos = state.map(
+    ({ todos }) => todos.filter((todo) => todo.done).length
+  );
+  const totalTodos = state.map(({ todos }) => todos.length);
+  document
+    .querySelectorAll(".todos_count")
+    .forEach(
+      (todoCount, index) =>
+        (todoCount.textContent = `Todos: ${doneTodos[index]}/${totalTodos[index]}`)
+    );
+
+  state.length > 0
+    ? (clearBtn.style.display = "inline")
+    : (clearBtn.style.display = "none");
 
   localStorage.data = JSON.stringify(state);
 });
@@ -114,6 +142,8 @@ inputList.onchange = () => {
 
   inputList.value = "";
 };
+
+clearBtn.onclick = () => clear();
 
 // Functions
 function addList(name) {
@@ -138,10 +168,16 @@ function deleteTodo(listIndex, id) {
     return state;
   });
 }
-function toggleTodo(li, i) {
+function deleteList(id) {
   setState((state) => {
-    const filteredTodos = state[li].todos.filter((todo) =>
-      todo.text.includes(state[li].filter)
+    state = state.filter((state) => state.id !== id);
+    return state;
+  });
+}
+function toggleTodo(listIndex, i) {
+  setState((state) => {
+    const filteredTodos = state[listIndex].todos.filter((todo) =>
+      todo.text.includes(state[listIndex].filter)
     );
     filteredTodos[i].done = !filteredTodos[i].done;
     return state;
@@ -153,3 +189,34 @@ function setfilter(listIndex, filter) {
     return state;
   });
 }
+function clear() {
+  setState((state) => {
+    state.length = 0;
+    return state;
+  });
+}
+function allDone(listIndex) {
+  setState((state) => {
+    state[listIndex].todos.forEach((todo) => (todo.done = true));
+    return state;
+  });
+}
+function allUnDone(listIndex) {
+  setState((state) => {
+    state[listIndex].todos.forEach((todo) => (todo.done = false));
+    return state;
+  });
+}
+function clearTodos(listIndex) {
+  setState((state) => {
+    state[listIndex].todos.length = 0;
+    return state;
+  });
+}
+function displayOptions(listIndex) {
+  document.querySelectorAll(".options")[listIndex].style.display === "block"
+    ? (document.querySelectorAll(".options")[listIndex].style.display = "none")
+    : (document.querySelectorAll(".options")[listIndex].style.display =
+        "block");
+}
+
