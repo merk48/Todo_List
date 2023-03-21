@@ -230,6 +230,7 @@ input:focus {
   font-weight: normal;
   background-color: #CDFCF6;
   border: 1px solid #000;
+   color: #CDFCF6;
   border-radius: 50%;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
@@ -292,6 +293,7 @@ input:focus {
 }
 
 .options li {
+  width: fit-content;
   transition: .2s;
   -webkit-transition: .2s;
   -moz-transition: .2s;
