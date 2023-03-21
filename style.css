@@ -4,6 +4,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+
 }
 
 html {
@@ -17,7 +18,8 @@ body {
 }
 
 h2 {
-  margin: auto auto 10px;
+  text-align: center;
+  margin: 5px;
 }
 
 input:focus {
@@ -25,13 +27,23 @@ input:focus {
 }
 
 .lists {
-  background-image: linear-gradient();
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 2em;
-  margin-top: 2em;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+  margin: 40px;
+}
+
+@media (max-width:767px) {
+  .lists {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  h2 {
+    margin-top: 20px;
+  }
 }
 
 .list {
@@ -47,50 +59,74 @@ input:focus {
   -moz-border-radius: 10px;
   -ms-border-radius: 10px;
   -o-border-radius: 10px;
+  position: relative;
 }
 
-ul {
+.todos {
   list-style: none;
   margin: 0;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  margin-bottom: 50px;
 }
 
-li {
-  font-size: 20px;
+.todos li {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
+  overflow: hidden;
   max-width: 100%;
   width: 100%;
   padding: 5px 10px;
   background-image: linear-gradient(to right, #faf7f000, #00000000);
-  border-right: .3px solid #000000;
-  border-bottom: 1.8px solid #000;
   position: relative;
   transition: .4s;
   -webkit-transition: .4s;
   -moz-transition: .4s;
   -ms-transition: .4s;
   -o-transition: .4s;
+
 }
 
-li:last-of-type {
-  border-radius: 0 0 10px 0;
-  -webkit-border-radius: 0 0 10px 0;
-  -moz-border-radius: 0 0 10px 0;
-  -ms-border-radius: 0 0 10px 0;
-  -o-border-radius: 0 0 10px 0;
+.todos li:not(:last-of-type) {
+  border-bottom: 1.8px solid #000;
 }
 
-li div.todo {
+.todos li div.todo {
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 4px;
   align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+}
+.todos li div.todo span {
+  display: inline-flex;
+  flex-wrap: wrap;
+  white-space: normal;
 }
 
+.clear {
+  cursor: pointer;
+  padding: 5px;
+  font-size: 10px;
+  font-weight: bold;
+  background-color: #000000;
+  color: #CDFCF6;
+  box-shadow: 1px 1px 2px rgb(0, 0, 0);
+  border: 1.5px solid #bfeaf5cd;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+  display: none;
+}
+
+.clear:hover {
+  text-decoration: underline;
+}
 
 #add-list {
   padding: 10px;
@@ -122,52 +158,78 @@ li div.todo {
   background-color: #CDFCF6;
   box-shadow: 1px 5px 10px rgb(0, 0, 0);
   border: 1.5px solid #bfeaf5cd;
+  position: absolute;
+  bottom: 10px;
+}
+
+.add-todo:focus {
+  width: calc(100% - 20px);
 }
 
 .filter_btn {
-  background-color: #CDFCF6;
-  color: #d91111;
-  border: 1px solid #CDFCF6;
-  padding: 2px;
-  width: 80px;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  padding: 5px;
+  width: fit-content;
   font-size: 10px;
   font-weight: bold;
   text-transform: uppercase;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  -ms-border-radius: 5px;
-  -o-border-radius: 5px;
+  margin-bottom: 40px;
 }
 
 .filter_btn:hover {
-  cursor: pointer;
   text-decoration: underline;
 }
 
-.delete_btn {
+.delete_todo {
+  cursor: pointer;
   font-size: 15px;
-  margin-right: 0;
+  margin-right: 2px;
+  color: #000;
+  text-shadow: 0 0 1px #CDFCF6;
   transition: .1s;
   -webkit-transition: .1s;
   -moz-transition: .1s;
   -ms-transition: .1s;
   -o-transition: .1s;
 }
-.delete_btn:hover {
+
+.delete_list {
   cursor: pointer;
-  transform: scale(1.1);
-  -webkit-transform: scale(1.1);
-  -moz-transform: scale(1.1);
-  -ms-transform: scale(1.1);
-  -o-transform: scale(1.1);
+  position: absolute;
+  left: 10px;
+  top: 2px;
+  font-size: 20px;
 }
+
+
+.delete_todo:hover,
+.delete_list:hover {
+  transform: translateY(1px);
+  -webkit-transform: translateY(1px);
+  -moz-transform: translateY(1px);
+  -ms-transform: translateY(1px);
+  -o-transform: translateY(1px);
+}
+
+
+.todos_count {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-weight: bold;
+}
+
+
 .check_box {
   cursor: pointer;
   width: 20px;
   height: 20px;
+  margin-right: 10px;
+  font-weight: normal;
   background-color: #CDFCF6;
-  border: 1px solid #d91111;
+  border: 1px solid #000;
   border-radius: 50%;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
@@ -175,6 +237,7 @@ li div.todo {
   -o-border-radius: 50%;
   position: relative;
 }
+
 .done .check_box::after {
   content: '✔';
   position: absolute;
@@ -193,20 +256,72 @@ li div.todo {
   -o-border-radius: 50%;
 }
 
-.hash {
+.menu {
   cursor: pointer;
-  color: #d91111;
-  font-size: 22px;
-  font-weight: bold;
-  text-shadow: 1px 2px 4px #ffffff;
+  font-size: 25px;
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+  width: fit-content;
+  margin-left: 90%;
 }
 
-.done {
-  background-color: transparent;
-  background-image: linear-gradient(to right, #faf7f000, #CDFCF6);
+.options {
+  display: none;
+  position: absolute;
+  list-style: none;
+  border-left: 2px solid #000;
+  background-color: #cdfcf6e4;
+  width: fit-content;
+  font-size: 15px;
+  font-weight: bold;
+  z-index: 100;
+  margin-left: 58%;
+  top: 40px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
 }
+
+.options li:not(:last-of-type) {
+  border-bottom: 1px solid #000;
+}
+
+.options li {
+  transition: .2s;
+  -webkit-transition: .2s;
+  -moz-transition: .2s;
+  -ms-transition: .2s;
+  -o-transition: .2s;
+}
+
+.options li:hover {
+  /* text-decoration: underline; */
+  transform: translateY(1px);
+  -webkit-transform: translateY(1px);
+  -moz-transform: translateY(1px);
+  -ms-transform: translateY(1px);
+  -o-transform: translateY(1px);
+}
+
+.hash {
+  cursor: pointer;
+  color: #000000;
+  font-size: 21px;
+  font-weight: bolder;
+  text-shadow: 1px 1px 1px #CDFCF6,1.2px 1.2px 1px #000000;
+}
+
+li.done {
+  background-image: linear-gradient(to right, #ffffff39, #cdfcf6);
+}
+
 .done .check_box {
-  background-color: #d91111;
+  background-color: #000;
   border: 1px solid #CDFCF6;
 }
 
